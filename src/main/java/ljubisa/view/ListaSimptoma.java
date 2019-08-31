@@ -21,8 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 
-//import com.ljubek.view.DualListBox.RemoveListener;
-//import com.ljubek.view.SortedListMod;
 //import com.sun.org.apache.xpath.internal.operations.Mod;
 
 public class ListaSimptoma extends JPanel {
@@ -39,8 +37,8 @@ public class ListaSimptoma extends JPanel {
 	private SortedListMod selectedListModel;
 	private JButton addBtn;
 	private JButton removeBtn;
-	private JButton printBtn;
-	private JButton upitBtn;
+	public JButton printBtn;
+	public JButton upitBtn;
 	
 	public JButton getPrintBtn() {
 		return printBtn;
