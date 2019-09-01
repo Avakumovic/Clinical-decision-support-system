@@ -1,7 +1,12 @@
 package ljubisa.view;
 
+import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -10,8 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import javafx.scene.layout.Border;
+import ljubisa.main.main;
+import ljubisa.model.Lek;
 import ljubisa.model.Lekovi;
 import ljubisa.model.Pacijent;
+import ljubisa.model.SastavLeka;
 
 public class IzmenaPacijenta extends JDialog {
 	
@@ -132,7 +141,107 @@ public class IzmenaPacijenta extends JDialog {
 		ArrayList<String> jeAlergicanNa = new ArrayList<>();
 		ArrayList<String> nijeAlergicanNa = new ArrayList<>();
 		DodatneOpcije dodatneOpcije = DodatneOpcije.getDodatneOpcije(null);
+		//lekovi = main.lekovi;
 		
+		for(Lek l1 : pacijentt.getAlergicanNaLekove()) {
+			jeAlergicanNa.add(l1.getNazivLeka());
+		}
+		for(Lek l2 : lekovi.getSviLekovi()) {
+			nijeAlergicanNa.add(l2.getNazivLeka());
+		}
+		for(Lek l2 : pacijentt.getAlergicanNaLekove()) {
+			nijeAlergicanNa.remove(l2.getNazivLeka());
+		}
+		
+		alergijaNaLekove.addPossibleElements(nijeAlergicanNa.toArray());
+		alergijaNaLekove.addSelectedElements(jeAlergicanNa.toArray());
+		alergijaNaLekove.printBtn.setVisible(false);
+		alergijaNaLekove.getPossibleLabel().setText("Nije alergican");
+		alergijaNaLekove.getSelectedLabel().setText("Jeste alergican");
+		
+	}
+	
+	private void ListaSastojaka() {
+		alergijaNaSastav = new ListaSimptoma();
+		ArrayList<String> sastavCeli = new ArrayList<>();
+		ArrayList<String> sastavJeAlergican = new ArrayList<>();
+		for(SastavLeka sastav : SastavLeka.values()) {
+			if(pacijentt.getAlergijaNaSastav().contains(sastav.toString())) {
+				sastavJeAlergican.add(sastav.toString());
+			} else {
+				sastavCeli.add(sastav.toString());
+			}
+		}
+		alergijaNaSastav.addPossibleElements(sastavCeli.toArray());
+		alergijaNaSastav.addSelectedElements(sastavJeAlergican.toArray());
+		alergijaNaSastav.printBtn.setVisible(false);
+		alergijaNaSastav.upitBtn.setVisible(false);
+		alergijaNaSastav.getPossibleLabel().setText("Nije alergican na sastav");
+		alergijaNaSastav.getSelectedLabel().setText("Jeste alergican na sastav");
+	}
+	
+	public void init() {
+		setSize(800, 800);
+		setLayout(new BorderLayout());
+		imeLabel = new JLabel("Ime");
+		prezimeLabel = new JLabel("Prezime");
+		imeField = new JTextField(50);
+		prezimeField = new JTextField(50);
+		imeField.setText(pacijentt.getIme());
+		prezimeField.setText(pacijentt.getPrezime());
+		okBtn = new JButton("OK");
+		cancel = new JButton("Cancel");
+		southPanel = new JPanel();
+		southPanel.add(okBtn);
+		southPanel.add(cancel);
+		northPanel = new JPanel();
+		northPanel.setLayout(new GridLayout(2, 2));
+		northPanel.add(imeLabel);
+		northPanel.add(prezimeLabel);
+		northPanel.add(imeField);
+		northPanel.add(prezimeField);
+		
+		centralPanel = new JPanel();
+		try {
+			ListaLekova();
+		} catch (Exception ee) {
+			// TODO: handle exception
+			ee.printStackTrace();
+		}
+		ListaSastojaka();
+		prepisaneTerapijeLabel = new JLabel("Prepisane terapije");
+		prepisaneTerapije = new JComboBox<>(pacijentt.getTerapije().toArray());
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(2, 1));
+		panel.add(prepisaneTerapijeLabel);
+		panel.add(prepisaneTerapije);
+		centralPanel.setLayout(new GridLayout(3, 1));
+		centralPanel.add(alergijaNaLekove);
+		centralPanel.add(alergijaNaSastav);
+		centralPanel.add(panel);
+		
+		add(southPanel, BorderLayout.SOUTH);
+		add(northPanel, BorderLayout.NORTH);
+		add(centralPanel, BorderLayout.CENTER);
+		
+		okBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				pacijentt.setIme(imeField.getText());
+				pacijentt.setPrezime(prezimeField.getText());
+				HashSet<String> thelist = new HashSet<>();
+				for(int i = 0; i < alergijaNaSastav.selectedList.getModel().getSize(); i++) {
+					thelist.add(alergijaNaSastav.selectedList.getModel().getElementAt(i).toString());
+				}
+				pacijentt.setAlergijaNaSastav(thelist);	
+				HashSet<String> thelist2 = new HashSet<>();
+				for(int i = 0; i < alergijaNaLekove.selectedList.getModel().getSize(); i++) {
+						
+				}
+			}
+		});
 	}
 }
 

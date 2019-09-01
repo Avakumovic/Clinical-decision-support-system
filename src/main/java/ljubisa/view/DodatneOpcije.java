@@ -2,6 +2,7 @@ package ljubisa.view;
 
 import java.awt.HeadlessException;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,6 +14,7 @@ import javax.swing.JTextField;
 import com.sun.org.apache.xml.internal.security.Init;
 
 import ljubisa.model.Pacijenti;
+import ljubisa.model.SviSimptomi;
 
 public class DodatneOpcije extends JFrame {
 	private static DodatneOpcije dodatneOpcije;
@@ -171,7 +173,23 @@ public class DodatneOpcije extends JFrame {
 		this.dodavanjeTerapijeCheck = dodavanjeTerapijeCheck;
 	}
 
-	private void initCreate(Pacijenti pacijenti) {
+	private void initCreate(Pacijenti pac) {
+		setSize(1000, 1000);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		listaSimptoma = new ListaSimptoma();
+		ArrayList<String> simptomList = new ArrayList<>();
+		for(SviSimptomi simp : SviSimptomi.values()) {
+			if(simp != SviSimptomi.TEMPERATURA_IZMEDJU_40_I_41 && simp != SviSimptomi.TEMPERATURA_VECA_OD_38 && simp != SviSimptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_PROTEKLIH_60_DANA
+					&& simp != SviSimptomi.U_POSLEDNJIH_6_MESECI_ZABELEZEN_BAR_10_SLUCAJEVA_U_KOJEM_PACIJENT_IMA_VISOK_PRITISAK) {
+				simptomList.add(simp.toString());
+			}
+		}
+		pacijenti = pac;
+		
+		listaSimptoma.addPossibleElements(simptomList.toArray());
+		trenutnoStanje = TrenutnoStanje.getInstance();
+		Object[] pacijentObj = pac.getPacijenti().toArray();
+		pacijentCombo = new JComboBox<>(pac.getPacijenti().toArray());
 		
 	}
 }
