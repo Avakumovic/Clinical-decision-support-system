@@ -20,6 +20,7 @@ import ljubisa.main.main;
 import ljubisa.model.Lek;
 import ljubisa.model.Lekovi;
 import ljubisa.model.Pacijent;
+import ljubisa.model.Pacijenti;
 import ljubisa.model.SastavLeka;
 
 public class IzmenaPacijenta extends JDialog {
@@ -131,7 +132,7 @@ public class IzmenaPacijenta extends JDialog {
 		this.alergijaNaSastav = alergijaNaSastav;
 	}
 	
-	private IzmenaPacijenta(Frame frame, Pacijent pacijent, boolean mod) {
+	public IzmenaPacijenta(Frame frame, Pacijent pacijent, boolean mod) {
 		super(frame, "Pacijent: "+ pacijent.toString(), mod);
 		pacijentt = pacijent;
 	}
@@ -141,7 +142,7 @@ public class IzmenaPacijenta extends JDialog {
 		ArrayList<String> jeAlergicanNa = new ArrayList<>();
 		ArrayList<String> nijeAlergicanNa = new ArrayList<>();
 		DodatneOpcije dodatneOpcije = DodatneOpcije.getDodatneOpcije(null);
-		//lekovi = main.lekovi;
+		lekovi = main.sviLekovi;
 		
 		for(Lek l1 : pacijentt.getAlergicanNaLekove()) {
 			jeAlergicanNa.add(l1.getNazivLeka());
@@ -238,8 +239,36 @@ public class IzmenaPacijenta extends JDialog {
 				pacijentt.setAlergijaNaSastav(thelist);	
 				HashSet<String> thelist2 = new HashSet<>();
 				for(int i = 0; i < alergijaNaLekove.selectedList.getModel().getSize(); i++) {
-						
+						thelist2.add(alergijaNaLekove.selectedList.getModel().getElementAt(i).toString());
 				}
+				pacijentt.setAlergicanNaLekove(new HashSet<>());
+				for(Lek lek : lekovi.getSviLekovi()) {
+					if(thelist2.contains(lek.getNazivLeka())) {
+						pacijentt.dodajAlergijuNaLek(lek);
+					}
+				}
+				
+				DodatneOpcije dodatneOpcije = DodatneOpcije.getDodatneOpcije(null);
+				Pacijenti pac = dodatneOpcije.getPacijenti();
+				pac.ukloniPacijenta(pacijentt.getId());
+				pac.dodajPacijenta(pacijentt);
+				
+				try {
+					pac.zapisiPacijente(pac);
+					pac = pac.ucitajPacijente();
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+				setVisible(false);
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				setVisible(false);
 			}
 		});
 	}

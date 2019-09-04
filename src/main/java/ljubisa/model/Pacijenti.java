@@ -24,10 +24,32 @@ public class Pacijenti implements Serializable {
 		pacijenti.add(pacijent);
 	}
 	
+	public void addWithIncrement(Pacijent p) {
+		p.setId(pacijenti.size() + 1);
+		for (Pacijent pac : pacijenti) {
+			while (pac.getId() == p.getId()) {
+				int id = p.getId();
+				p.setId(++id);
+			}
+		}
+		pacijenti.add(p);
+	}
+
+	
 	public boolean ukloniPacijenta(Pacijent pac) {
 		for (Pacijent pacijent : pacijenti) {
 			if(pacijent.getId() == pac.getId()) {
 				pacijenti.remove(pacijent);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean ukloniPacijenta(int id) {
+		for(Pacijent pac : pacijenti) {
+			if(pac.getId() == id) {
+				pacijenti.remove(pac);
 				return true;
 			}
 		}
