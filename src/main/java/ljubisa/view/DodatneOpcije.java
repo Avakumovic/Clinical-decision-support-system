@@ -56,6 +56,26 @@ public class DodatneOpcije extends JFrame {
 	private PrepisivanjeTerapije prepisivanjeTerapijePanel;
 	private IzmenaPacijenta izmenaPacijentaDia;
 	
+	public TrenutnoStanje getTrenutnoStanje() {
+		return trenutnoStanje;
+	}
+
+	public void setTrenutnoStanje(TrenutnoStanje trenutnoStanje) {
+		this.trenutnoStanje = trenutnoStanje;
+	}
+
+	public JTextField getTrecaGrupa() {
+		return trecaGrupa;
+	}
+
+	public void setTrecaGrupa(JTextField trecaGrupa) {
+		this.trecaGrupa = trecaGrupa;
+	}
+
+	public static DodatneOpcije getDodatneOpcije() {
+		return dodatneOpcije;
+	}
+	
 	public PrepisivanjeTerapije getPrepisivanjeTerapijePanel() {
 		return prepisivanjeTerapijePanel;
 	}

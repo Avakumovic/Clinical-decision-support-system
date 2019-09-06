@@ -13,6 +13,14 @@ public class TrenutnoStanje extends JPanel {
 	private JPanel panel;
 	private Temperatura temp;
 	
+	public Temperatura getTemp() {
+		return temp;
+	}
+
+	public void setTemp(Temperatura temp) {
+		this.temp = temp;
+	}
+
 	public static TrenutnoStanje getInstance() {
 		if (instance == null) {
 			instance = new TrenutnoStanje();
@@ -20,7 +28,7 @@ public class TrenutnoStanje extends JPanel {
 		return instance;
 	}
 	
-	class Temperatura extends JPanel {
+	public class Temperatura extends JPanel {
 		private JTextField text;
 		private JLabel label;
 		public Temperatura(String str) {

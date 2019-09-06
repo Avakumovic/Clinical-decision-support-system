@@ -70,6 +70,7 @@ public class Terapija implements Serializable {
 		this.visokPritisak = visokPritisak;
 	}
 	
+	@Deprecated
 	public Terapija(Bolest bolest, ArrayList<Lek> lekovi, String preporuka, LocalDate datum) {
 		super();
 		this.bolest = bolest;

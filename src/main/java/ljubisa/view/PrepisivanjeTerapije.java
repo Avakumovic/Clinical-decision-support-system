@@ -61,12 +61,12 @@ public class PrepisivanjeTerapije extends JPanel {
 	
 	public PrepisivanjeTerapije() throws Exception {
 		super();
-		//Bolesti bolesti = main.before();
+		Bolesti bolesti = main.getBolesti();
 		bolestiLabel = new JLabel("Bolesti");
 		prepisanaTerapijaLabel = new JLabel("Prepisana terapija");
 		preporukaLabel = new JLabel("Preporuka");
 		preporukaLekaraField = new JTextField(" ");
-		//bolestiComboBox = new JComboBox<>(bolesti.getBolesti().toArray());
+		bolestiComboBox = new JComboBox<>(bolesti.getBolesti().toArray());
 		listaSimptoma = new ListaSimptoma();
 		listaSimptoma.getPossibleLabel().setText("Lekovi");
 		listaSimptoma.getSelectedLabel().setText("Prepisani lekovi");
