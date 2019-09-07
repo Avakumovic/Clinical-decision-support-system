@@ -1,0 +1,38 @@
+package ljubisa
+
+import ljubisa.model.*;
+import java.util.Set
+import java.util.List
+import java.time.LocalDate
+global Bolest dijabetes;
+global Bolest hipertenzija;
+
+rule "dijabetes moze biti"
+agenda-group "druga"
+salience 100 
+    when
+        $pr:Pregled($sim:sviSimptomi, $mogucaB:potencijalneBolesti) and
+        $sss:Set() from collect ($s:SviSimptomi( 
+        	this==SviSimptomi.CESTO_URINIRANJE ||
+        	this==SviSimptomi.GUBITAK_TESENE_TEZINE ||
+        	this==SviSimptomi.UMOR ||
+        	this==SviSimptomi.MUCNINA_I_POVRACANJE
+        )from $sim) and
+        eval($sss.size()>3)
+        $dajMiBolest : PotencijalnaBolest(nazivBolesti=="dijabetes") from $mogucaB 
+    then
+		$dajMiBolest.setSansa($sss.size()/4.0);
+end
+
+rule "hipertenzija moze biti"
+agenda-group "druga"
+salience 90
+    when
+        $pr:Pregled($pac:pacijent, $mogucaB:potencijalneBolesti)
+		$pacient:Pacijent(this==$pac, $ter:terapije) from $pac
+		$l:List(size>9) from collect(
+		$ppppp:Terapija(visokPritisak==true, barDesetPutaVisokPritisaDoSestMeseci())from $ter) 
+		$dajMiBolest:PotencijalnaBolest(nazivBolesti =="hipertenzija") from $mogucaB 	
+    then
+		$dajMiBolest.setSansa(1);
+end

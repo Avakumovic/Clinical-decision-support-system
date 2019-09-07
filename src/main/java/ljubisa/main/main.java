@@ -131,7 +131,7 @@ public class main {
 		JLabel passwordLabel = new JLabel("Password");
 		JTextField username = new JTextField(50);
 		JTextField password = new JTextField(50);
-		pane.setLayout(new GridLayout(1, 4));
+		pane.setLayout(new GridLayout(4, 1));
 		pane.add(usernameLabel);
 		pane.add(username);
 		pane.add(passwordLabel);

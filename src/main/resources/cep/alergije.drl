@@ -1,0 +1,127 @@
+package ljubisa
+
+import ljubisa.model.*;
+import java.util.Set
+import java.util.List
+import javax.swing.JTextArea;
+import java.time.LocalDate
+
+global Lek Lek1;
+global Lek Lek2;
+global Lek Lek3;
+
+rule "print"
+salience 340
+	when
+		$text:JTextArea(  )
+	then
+		$text.setText("Alergije na lekove \n");
+end
+
+rule "alergican na Lek1"
+salience 330
+	when 
+		$l:Lek(nazivLeka=="Lek1")
+		$text:JTextArea(  )
+		$pac:Pacijent($alerLek:alergicanNaLekove) and
+		$s:Set(size > 0) from collect ($al:Lek(this.getNazivLeka() == Lek1.getNazivLeka()) from $alerLek)
+		$aPac : Alergicnost()
+	then   
+		$aPac.setJeAlergican(true);
+	 	$text.setText($text.getText()+"  "+Lek1.getNazivLeka()+"\n");
+end
+
+rule "Alergican na Lek2"
+salience 320
+	when 
+		$l:Lek( nazivLeka =="Lek2" )
+		$text:JTextArea(  )
+		$pac:Pacijent($alerLek:alergicanNaLekove) and
+		$s:Set(size > 0) from collect($al:Lek(this.getNazivLeka() == Lek2.getNazivLeka()) from $alerLek)
+		$aPac:Alergicnost()
+	then   
+	    $aPac.setJeAlergican(true);
+	  	$text.setText($text.getText()+"  "+Lek2.getNazivLeka()+"\n");
+end
+
+rule "Alergican na Lek3"
+salience 310
+	when 
+		$l:Lek(nazivLeka=="Lek3")
+		$text :JTextArea(  )
+		$pac:Pacijent($alerLek: alergicanNaLekove) and
+		$s:Set(size > 0) from collect($al:Lek(this.getNazivLeka() == Lek3.getNazivLeka()) from $alerLek)
+		$aPac:Alergicnost()
+	then   
+	  	$aPac.setJeAlergican(true);
+	  	$text.setText($text.getText()+"  "+Lek3.getNazivLeka()+"\n");
+end
+
+rule	" print2"
+salience 300
+	when	
+		$text:JTextArea(  )
+	then
+		$text.setText($text.getText()+"\n"+"Alergije na sastojke iz leka\n");
+end
+
+rule "alergican na sastojke lekova"
+salience 290
+	when
+		$sSastojciIZabrani:Set()
+		$text:JTextArea(  )
+		$pac:Pacijent($aleSastojci: alergijaNaSastav) and
+		$s:Set(Size>0) from collect($str:String(this memberOf $sSastojciIZabrani) from $aleSastojci)
+		$aPac:Alergicnost()
+	then
+		$aPac.setJeAlergican(true);
+		$text.setText($text.getText()+$s+"\n");
+end
+
+rule "reset pac"
+salience -100
+	when
+		$pac:Pacijent()
+	then
+		delete($pac);
+end
+
+rule "reset Alergican pac"
+salience -100
+	when
+		$aPac:Alergicnost()
+	then
+		delete($aPac);
+end
+
+rule "reset JTextArea"
+salience -100
+	when
+		$text:JTextArea(  )
+	then
+		delete($text);
+end
+
+rule "reset selektovaniLekovi"
+salience -100
+	when
+		$l:Lek(  ) 
+	then
+		delete($l);
+end
+
+rule "reset ubaceneSastojkeLekova"
+salience -100
+	when
+		$sl:SastavLeka()
+	then
+		delete($sl);
+end
+
+rule "reset ubaceneSastojkeLekova SET"
+salience -100
+	when
+		$s:Set()
+	then
+		delete($s);
+end
