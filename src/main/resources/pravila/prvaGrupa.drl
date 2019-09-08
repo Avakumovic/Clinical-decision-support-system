@@ -1,0 +1,145 @@
+package ljubisa
+
+import ljubisa.model.*;
+import java.util.Set
+import java.util.List
+import javax.swing.JTextArea;
+import javax.swing.JTextField
+import java.lang.Thread
+import java.time.LocalDate
+global Bolest groznica;
+global Bolest prehlada;
+global Bolest upalaKrajnika;
+global Bolest sinusnaInfekcija;
+
+rule "upalaKrajnika moze biti"
+agenda-group "prva"
+salience Math.round(($siz.size()*100)/upalaKrajnika.getSviSimptomi().size())
+	when
+		$tex : JTextField(  )
+		$prr : Pregled( $sim : sviSimptomi, $mogucaB : potencijalneBolesti) and
+		$siz : Set() from collect($svi : SviSimptomi(this memberOf upalaKrajnika.getSviSimptomi()) from $sim) and
+		eval($siz.size() > 3) 
+		$dajMiBolest:PotencijalnaBolest(nazivBolesti =="upalaKrajnika") from $mogucaB
+	then
+		$dajMiBolest.setSansa($siz.size()/(double)upalaKrajnika.getSviSimptomi().size());
+		$tex.setText($tex.getText()+"UpalaKrajnika " + String.format("%.2f", ($siz.size()/(double)upalaKrajnika.getSviSimptomi().size())*100)+"%	") ;
+end
+
+rule "sinusnaInfekcija moze biti"
+agenda-group "prva"
+salience Math.round(($stt.size()*100)/sinusnaInfekcija.getSviSimptomi().size())
+	when
+		$tex : JTextField(  )
+		$prr : Pregled($sim:sviSimptomi, $pot : potencijalneBolesti) and
+		$stt : Set() from collect($s : SviSimptomi(this memberOf sinusnaInfekcija.getSviSimptomi()) from $sim) and
+		eval($stt.size() > 3) 
+		$bol : PotencijalnaBolest(nazivBolesti == "sinusnaInfekcija") from $pot
+	then
+		$bol.setSansa($stt.size()/(double)sinusnaInfekcija.getSviSimptomi().size());
+		$tex.setText($tex.getText() + "SinusnaInfekcija " + String.format("%.2f", ($stt.size()/(double)sinusnaInfekcija.getSviSimptomi().size())*100)+"%	") ;
+end
+
+rule "groznica moze biti"
+agenda-group "prva"
+
+salience Math.round(($stt.size()*100)/groznica.getSviSimptomi().size())
+	when
+		$txt : JTextField(  )
+		$pre : Pregled($svi : sviSimptomi, $pot : potencijalneBolesti) and
+		$stt : Set() from collect($s : SviSimptomi(this memberOf groznica.getSviSimptomi()) from $svi) and
+		eval($stt.size() > 3) 
+		$bol : PotencijalnaBolest(nazivBolesti=="groznica") from $pot	
+	then
+		$bol.setSansa($stt.size()/(double)groznica.getSviSimptomi().size());
+		$txt.setText($txt.getText()+"Groznica " + String.format("%.2f", ($stt.size()/(double)groznica.getSviSimptomi().size())*100)+"%	");
+end
+
+rule "prehlada moze biti"
+agenda-group "prva"
+salience Math.round(($stt.size()*100)/prehlada.getSviSimptomi().size())
+	when
+		$txt : JTextField(  )
+		$pre : Pregled($svi : sviSimptomi, $pot : potencijalneBolesti) and
+		$stt : Set() from collect($s : SviSimptomi(this memberOf prehlada.getSviSimptomi()) from $svi) and
+		eval($stt.size() > 3)  
+		$dajMiBolest : PotencijalnaBolest(nazivBolesti=="prehlada") from $pot
+	then
+		$dajMiBolest.setSansa($stt.size()/(double)prehlada.getSviSimptomi().size());
+		$txt.setText($txt.getText()+"Prehlada " + String.format("%.2f", ($stt.size()/(double)prehlada.getSviSimptomi().size())*100)+"%	");
+end
+
+rule "bolovanje od prehlada ili groznice u poslednjih 60 dana"
+agenda-group "prva"
+no-loop
+lock-on-active
+salience  -330
+	when
+		$txt : JTextField(  )
+		$pre : Pregled($pac : pacijent)
+		$pcc : Pacijent(this == $pac, $ter : terapije) from $pac
+		$lis : List(size > 0) from collect ($ppp : Terapija((bolest.naziv=="groznica" || bolest.naziv=="prehlada") 
+		&& $ppp.propisanaTerapijaDoSestMeseci())from $ter) 
+ 	then
+		$pre.getSviSimptomi().add(SviSimptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_PROTEKLIH_60_DANA);
+		$txt.setText("");
+		update($pre)
+end
+
+rule "temperatura veca od 38"
+agenda-group "prva"
+no-loop
+lock-on-active
+salience -330
+	when
+		$txt : JTextField(  )
+		$pre : Pregled($temp : temperatura)
+		eval($temp>38.0)
+	then
+		$pre.getSviSimptomi().add(SviSimptomi.TEMPERATURA_VECA_OD_38);
+		$txt.setText("");
+		update($pre)
+end
+
+rule "temperatura izmedju 40 i 41"
+agenda-group "prva"
+no-loop
+lock-on-active
+salience -330
+	when
+		$txt : JTextField(  )
+		$pre : Pregled($temp : temperatura)
+		eval($temp > 40.0)
+		eval($temp < 41.0)
+	then
+		$pre.getSviSimptomi().add(SviSimptomi.TEMPERATURA_IZMEDJU_40_I_41);
+		$txt.setText("");
+		update($pre)
+end
+
+rule "nadji najbolu mogucnost"
+agenda-group "prva"
+salience -400
+	when
+		$pre : Pregled($mog:potencijalneBolesti)
+		$dou : Double(doubleValue >= 0.0) from accumulate(
+		$pot : PotencijalnaBolest($mm : sansa) from $mog,max($mm))
+	then
+		$pre.setNajboljaProcena($dou);
+end
+
+rule "reset pregled"
+salience -1000
+	when
+		$pre : Pregled()
+	then
+		delete($pre);
+end
+
+rule "reset tf"
+salience -1000
+	when
+		$txt : JTextField(  )
+	then
+		delete($txt);
+end

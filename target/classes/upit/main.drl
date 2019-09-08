@@ -1,0 +1,201 @@
+package ljubisa
+
+import ljubisa.model.*;
+import java.util.Set
+import java.util.List
+import javax.swing.JTextArea;
+
+global Bolest prehlada;
+global Bolest groznica;
+global Bolest upalaKrajnika;
+global Bolest sinusnaInfekcija;
+global Bolest dijabetes;
+global Bolest hipertenzija;
+global Bolest hronicnaBubreznaBolest;
+global Bolest akutnaBubreznaBolest;
+
+query issimptomContainedInBolest (SviSimptomi sim, Bolest bol)
+	BolestSimptomLink ( sim, bol; )
+end
+
+rule "prikazi Specificne simp neke bolesti"
+salience 300
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$txt : JTextArea(   )
+		$bol : Bolest($spec : specificniSimptomi != null)
+	then
+		$txt.setText($txt.getText() + "Specificni simptomi " + $spec + "\n");
+end
+
+rule "prikazi sim neke bole"
+salience 200
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$txt : JTextArea(  )	
+		$bol : Bolest($svi : sviSimptomi)
+	then
+	 	$txt.setText($txt.getText()+ "Simptomi: " + $svi+ "\n");
+end
+
+rule	"prehlada"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled(  )
+		$txt : JTextArea()
+		$stt : Set(size > 0) from collect (SviSimptomi(this memberOf prehlada.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "prehlada " + $stt.size()+"\n");
+end
+
+rule	"groznica"
+agenda-group "SimpUBolestima"
+salience $s.size()
+	when
+		Pregled()
+		$txt : JTextArea(  )
+		$s : Set(size > 0) from collect (SviSimptomi(this memberOf groznica.getSviSimptomi()))
+		
+	then
+		$txt.setText($txt.getText()+"groznica " +$s.size()+"\n");
+end
+
+rule	"upalaKrajnika"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled()
+		$txt : JTextArea(  )
+		$stt : Set(size > 0) from collect(SviSimptomi(this memberOf upalaKrajnika.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "upalaKrajnika " + $stt.size()+"\n");
+end
+
+rule	"sinusnaInfekcija"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled(  )
+		$txt : JTextArea(  )
+		$stt : Set(size > 0) from collect (SviSimptomi(this memberOf sinusnaInfekcija.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "sinusnaIinfekcija " + $stt.size()+"\n");
+end
+
+rule	"dijabetes"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled(  )
+		$txt : JTextArea(  )
+		$stt : Set(size > 0) from collect (SviSimptomi(this memberOf dijabetes.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "dijabetes " + $stt.size() + "\n");
+end
+
+rule	"hipertenzija"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled(  )
+		$txt : JTextArea(  )
+		$stt : Set(size > 0) from collect (SviSimptomi(this memberOf hipertenzija.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "hipertenzija " + $stt.size()+"\n");
+end
+
+rule	"hronicnaBubreznaBolest"
+agenda-group "SimpUBolestima"
+salience $stt.size()
+	when
+		Pregled()
+		$txt : JTextArea(  )
+		$stt : Set(size > 0) from collect(SviSimptomi(this memberOf hronicnaBubreznaBolest.getSviSimptomi()))
+	then
+		$txt.setText($txt.getText() + "hronicnaBubreznaBolest " + $stt.size()+"\n");	
+end
+
+rule	"akutnaBubreznaBolest"
+agenda-group "SimpUBolestima"
+salience $stt1.size()+$sst2.size()
+	when
+		Pregled(  )
+		$txt : JTextArea()
+		$stt1 : Set() from collect (SviSimptomi(this memberOf akutnaBubreznaBolest.getSviSimptomi()))
+		$sst2 : Set() from collect (SpecificniSimptomi())  
+		eval($stt1.size() + $sst2.size()>0)
+	then
+		int i = ($stt1.size()+$sst2.size());
+		$txt.setText($txt.getText() + "akutnaBubreznaBolest " + i + "\n");
+end
+
+rule	"veca od 38"
+agenda-group "SimpUBolestima"
+salience -800
+no-loop
+lock-on-active
+	when
+		$txt : JTextArea(  )
+		$pre : Pregled(temperatura > 38)
+	then
+	 	insert(SviSimptomi.TEMPERATURA_VECA_OD_38); 
+		$txt.setText("");
+		update($pre);
+end
+
+rule	"izmedju 40 i  41"
+agenda-group "SimpUBolestima"
+salience -800
+no-loop
+lock-on-active
+	when
+		$txt : JTextArea(  )
+		$pre : Pregled($temp : temperatura)
+		eval($temp > 40.0)
+		eval($temp < 41.0)
+	then
+	 	insert(SviSimptomi.TEMPERATURA_IZMEDJU_40_I_41); 
+		$txt.setText("");
+		update($pre);
+end
+
+rule "obrishi ta"
+salience -10
+	when
+		$txt : JTextArea(  )
+	then
+		delete($txt);
+end
+
+rule "obrishi selektovanu bolest"
+salience -10
+	when
+		$bol : Bolest()
+	then
+		delete($bol);
+end
+
+rule "obrishi simptome"
+salience -10
+when
+	$svi : SviSimptomi()
+then
+	delete($svi);
+end
+
+rule "obrishi specificne simptome "
+salience -10
+when
+	$spec : SpecificniSimptomi()
+then
+	delete($spec);
+end
+
+rule "obrishi Pregled"
+salience -11
+when
+	$pre : Pregled()
+then
+	delete($pre);
+end

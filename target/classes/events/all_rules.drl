@@ -1,0 +1,116 @@
+package ljubisa
+
+import ljubisa.model.*;
+import ljubisa.cds.*;
+import java.util.Set
+import java.util.List
+import javax.swing.JTextArea;
+import java.lang.Thread
+
+rule "Ubrzani srcani ritam "
+    when
+    	$txt : JTextArea(  )
+        $brr : Number(intValue > 25) from accumulate ($otk : OtkucajSrca() over window : length(26), count($otk)) 
+    then
+        $txt.setText($txt.getText() + "UBRZANI SRCANI RITAM\n u poslednih 10 secundi zabelezeno vishe od 25 otkucaja srca  \n");
+        insert(new UbrzanoKucanjeSrca());
+end
+
+rule "zaustavi tread"
+enabled false
+salience -1001
+    when
+    	$thr : Thread(  )
+        not(OtkucajSrca() over window : time(10s))
+    then
+        $thr.stop();
+end   
+
+rule "zaustavi monitoring TextArea"
+enabled false
+salience -1100
+    when
+    	$txt : JTextArea(  )
+        not(OtkucajSrca() over window : time(10s))
+    then
+    	$txt.setText($txt.getText() + "\n zaustavi monitoring");
+        drools.halt();
+        
+end   
+
+rule	"suma kolicine mokrenja u posednjih 12 sati manja od 100 ml"
+enabled false
+	when
+		$txt : JTextArea(  )
+		$brr : Number(intValue < 100) from accumulate(
+		$kol : KolicinaMokrenja($mil : kolicinaMililitri) over window:time(12h), sum($mil))
+	then
+		insert(new UkupnaKolicinaMokrenja());
+		$txt.setText($txt.getText() + "\n");
+end
+
+rule	"suma kolicine mokrenja u posednjih 12 sati manja od 100 mlTWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESTTTTTTTT"
+	when
+		$txt : JTextArea(  )
+		$brr : Number(intValue >= 100) from accumulate (
+		$kol : KolicinaMokrenja($mil : kolicinaMililitri) over window:time(12h), sum($mil))
+	then
+		insert(new UkupnaKolicinaMokrenja());
+end
+
+rule 	"u poslednjih 10 sekundi zabelezeno vishe od 10 otkucaja srca"
+	when
+		Number(intValue > 10) from accumulate(
+		$otk : OtkucajSrca() over window : length(11), count($otk))
+	then
+		insert(new ViseOdDesetOtkucajaSrca());
+end
+
+rule	"pacijent boluje od hronicne bubrezne bolesti"
+	when 
+		$pac : Pacijent($ter : terapije)
+		$lis : List(size > 0) from collect ($terr : Terapija(bolest.naziv =="hronicnaBubreznaBolest") from $ter) 
+
+	then
+		insert(new HronicnaBubreznaBolest());
+end	
+
+
+rule "Potrebna dijaliza"
+salience -1
+	when 
+		$txt : JTextArea(  )
+		HronicnaBubreznaBolest()
+		ViseOdDesetOtkucajaSrca()
+		not(UkupnaKolicinaMokrenja())
+	then
+		$txt.setText($txt.getText() + "HITNO POTREBNA DIJALIZA  \n");
+		insert(new HitnaDijaliza());
+end
+
+rule "Nivo kisonika ukrvi pacijenta je manja od 70 mmHg"
+	when
+		Disanje($num : kiseonik < 70) 
+	then
+		insert(new NizakNivoKiseonika());
+		
+end
+
+rule "rast kisonika"
+	when 
+		$di1 : Disanje($kis : kiseonik)
+		$di2:Disanje(this != $di1, this after $di1, kiseonik > $kis) 
+	then
+		insert(new NivoKiseonikaRaste());
+end
+
+rule "problem sa kiseonikom"
+salience -1
+	when
+		$txt : JTextArea(  )
+		not(NivoKiseonikaRaste() over window : time(15m)) 
+		NizakNivoKiseonika()
+	then
+		$txt.setText($txt.getText() + "PROBLEM SA KISEONIKOM \n");
+		insert(new NedostatakKiseonika());
+end

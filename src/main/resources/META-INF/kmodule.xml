@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
-	<kbase name="rules" packages="rules">
+	<kbase name="rules" packages="pravila">
 		<ksession name="ksession-rules" />
 	</kbase>
 
-	<kbase name="rulesIzveshtaji" packages="izveshtaji">
+	<kbase name="rulesIzveshtaji" packages="izvestaj">
 		<ksession name="ksession-rulesIzveshtaji" />
 	</kbase>
 	
-		<kbase name="rulesQ" packages="query">
+		<kbase name="rulesQ" packages="upit">
 		<ksession name="ksession-Querry" />
 	</kbase>
 	
-			<kbase name="rulesProveriAlergije" packages="alergije">
+			<kbase name="rulesProveriAlergije" packages="alergicnost">
 		<ksession name="ksession-ProveriAlergije" />
 	</kbase>
 
 	<kbase name="cepConfigKbase" eventProcessingMode="stream"
-		packages="cep2">
+		packages="events">
 		<ksession name="cepConfigKsessionPseudoClock"
 			clockType="pseudo" />
 		<ksession name="cepConfigKsessionRealtimeClock"

@@ -129,14 +129,14 @@ public class main {
 		JPanel pane = new JPanel();
 		JLabel usernameLabel = new JLabel("Username");
 		JLabel passwordLabel = new JLabel("Password");
-		JTextField username = new JTextField(50);
-		JTextField password = new JTextField(50);
+		JTextField username = new JTextField(25);
+		JTextField password = new JTextField(25);
 		pane.setLayout(new GridLayout(4, 1));
 		pane.add(usernameLabel);
 		pane.add(username);
 		pane.add(passwordLabel);
 		pane.add(password);
-		int response = JOptionPane.showConfirmDialog((null), pane, "log in", JOptionPane.YES_NO_OPTION);
+		int response = JOptionPane.showConfirmDialog((null), pane, "CDSS login", JOptionPane.YES_NO_OPTION);
 		
 		osoba = sviAdmini.provera(username.getText(), password.getText());
 		if(osoba == null) {
@@ -462,11 +462,14 @@ public class main {
 				ksQuerry.insert(selektovana);
 				
 				JTextArea taSimpomiZaOvuBolest = new JTextArea();
+				
 				taSimpomiZaOvuBolest.setEditable(false);
 				ksQuerry.insert(taSimpomiZaOvuBolest);
 				
 				ksQuerry.fireAllRules();
-				JOptionPane.showMessageDialog(dod, taSimpomiZaOvuBolest, "Simptomi: "+ selektovana.getNaziv(), JOptionPane.YES_OPTION );
+				JOptionPane thepane = new JOptionPane();
+				thepane.setSize(500, 500);
+				JOptionPane.showMessageDialog(dod, taSimpomiZaOvuBolest, "Simptomi bolesti: "+ selektovana.getNaziv(), JOptionPane.YES_OPTION );
 				
 			}
 		});

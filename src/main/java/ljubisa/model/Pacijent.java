@@ -11,6 +11,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 public class Pacijent extends Osoba implements Serializable {
 	
 	private int id;
+	
 	List<Terapija> terapije;
 	private HashSet<Lek> alergicanNaLekove;
 	private HashSet<String> alergijaNaSastav;
@@ -82,4 +83,10 @@ public class Pacijent extends Osoba implements Serializable {
 		this.alergijaNaSastav = new HashSet<>();
 		
 	}
+	
+	@Override
+	public String toString() {
+		return "Pacijent [Ime:" + getIme() + ", Prezime:" + getPrezime() + "]";
+	}
+
 }

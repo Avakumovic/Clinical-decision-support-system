@@ -210,7 +210,7 @@ public class DodatneOpcije extends JFrame {
 	}
 
 	private void initCreate(Pacijenti pac) {
-		setSize(1000, 1000);
+		setSize(1370, 725);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		listaSimptoma = new ListaSimptoma();
 		ArrayList<String> simptomList = new ArrayList<>();
@@ -241,9 +241,8 @@ public class DodatneOpcije extends JFrame {
 		
 		setLayout(new BorderLayout());
 		JPanel firstpanel = new JPanel();
-		firstpanel.setLayout(new GridLayout(3, 1));
+		firstpanel.setLayout(new GridLayout(2, 1));
 		firstpanel.add(pacijentCombo);
-		firstpanel.add(izmenaPacijenta);
 		firstpanel.add(trenutnoStanje);
 		
 		dodavanjePacijenta = new JButton("Dodaj pacijenta");
@@ -284,7 +283,7 @@ public class DodatneOpcije extends JFrame {
 		dodavanjeLekara = new JButton("Dodaj lekara");
 		dodavanjeLekara.setVisible(false);
 		dodavanjeLekara.setEnabled(false);
-		firstpanel.add(dodavanjeLekara);
+		
 
 		dodavanjeLekara.addActionListener(new ActionListener() {
 
@@ -381,32 +380,34 @@ public class DodatneOpcije extends JFrame {
 		izvestaj = new JButton("Izvestaj");
 
 		JPanel secondpanel = new JPanel();
-		secondpanel.setLayout(new GridLayout(5, 1));
+		secondpanel.setLayout(new GridLayout(3, 1));
 		secondpanel.add(dodavanjePacijenta);
 		secondpanel.add(brisanjePacijenta);
-		secondpanel.add(izmenaPacijenta);
-		secondpanel.add(monitoring);
-		secondpanel.add(izvestaj);
+		//secondpanel.add(izmenaPacijenta);
+		//secondpanel.add(monitoring);
+		//secondpanel.add(izvestaj);
+		secondpanel.add(dodavanjeLekara);
 
 		JPanel upperpanel = new JPanel();
 
 		upperpanel.setLayout(new GridLayout(1, 2));
-		upperpanel.add(firstpanel);
 		upperpanel.add(secondpanel);
+		upperpanel.add(firstpanel);
 
+		greska = new JTextField(100);
+		greska.setForeground(Color.BLUE);
+		greska.setEditable(false);
 		prvaGrupa = new JTextField(100);
 		drugaGrupa = new JTextField(100);
 		trecaGrupa = new JTextField(100);
 		preporuka = new JPanel();
-		preporuka.setLayout(new GridLayout(3, 1));
+		preporuka.setLayout(new GridLayout(4, 1));
+		preporuka.add(greska);
 		preporuka.add(prvaGrupa);
 		preporuka.add(drugaGrupa);
 		preporuka.add(trecaGrupa);
 		
-		greska = new JTextField(30);
-		greska.setForeground(Color.BLUE);
 		add(upperpanel, BorderLayout.NORTH);
-		
 		
 		try {
 			prepisivanjeTerapijePanel = new PrepisivanjeTerapije();
@@ -423,7 +424,6 @@ public class DodatneOpcije extends JFrame {
 		
 		thirdpanel.setLayout(new GridLayout(3, 1));
 		thirdpanel.add(listaSimptoma);
-		thirdpanel.add(new JLabel("Dijagnoziranje i prepisivanje terapije"));
 		
 		JPanel thesplit = new JPanel();
 		prepisiTerapiju = new JButton("Prepisi terapiju");
@@ -439,13 +439,13 @@ public class DodatneOpcije extends JFrame {
 		forthpanel.setVisible(true);
 		add(preporuka, BorderLayout.SOUTH);
 		JPanel panelEast = new JPanel();
-		panelEast.setLayout(new GridLayout(2, 1));
+		panelEast.setLayout(new GridLayout(1, 1));
+		panelEast.setSize(200, 200);
 		alergijaNaLek = new JTextArea();
 		alergijaNaSastav = new JTextArea();
 		alergijaNaSastav.setEditable(false);
 		alergijaNaLek.setEditable(false);	
-		greska.setEditable(false);
-		panelEast.add(greska);
+		
 		
 		JPanel alergijaSastavPane = new JPanel();
 		alergijaSastavPane.setLayout(new BorderLayout());
@@ -462,7 +462,7 @@ public class DodatneOpcije extends JFrame {
 		alergijaLekPane.add(scrollPanelAlergijeNaLek,BorderLayout.CENTER);
 		
 		panelEast.add(alergijaLekPane);
-		add(panelEast, BorderLayout.EAST);
+		thirdpanel.add(panelEast);
 		
 		setVisible(true);
 	}

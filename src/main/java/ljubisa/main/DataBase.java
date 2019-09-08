@@ -142,7 +142,7 @@ public class DataBase {
 		pac.addWithIncrement(Pacijent1);
 		pac.addWithIncrement(Pacijent2);
 		
-		Lekar lekar1 = new Lekar("Dejan", "Petkovic", "doc1", "doc1");
+		Lekar lekar1 = new Lekar("Dejan", "Petkovic", "dd", "dd");
 		Lekar lekar2 = new Lekar("Svetozar", "Tomic", "doc2", "doc2");
 
 		try {
@@ -246,7 +246,7 @@ public class DataBase {
 		}
 		
 		
-		Admin a1 = new  Admin("Aleksandar", "Avakumovic", "admin1","admin1");
+		Admin a1 = new  Admin("Aleksandar", "Avakumovic", "aa","aa");
 		Admin a2 = new Admin("Ljubisa", "Avakumovic", "admin2", "admin2");
 		Admini admini = new Admini();
 		admini.getAdmini().add(a1);

@@ -34,7 +34,7 @@ public class TrenutnoStanje extends JPanel {
 		public Temperatura(String str) {
 			text = new JTextField(4);
 			label = new JLabel(str);
-			setLayout(new GridLayout(2,1));
+			setLayout(new GridLayout(1,2));
 			add(text);
 			add(label);
 		}
@@ -85,11 +85,12 @@ public class TrenutnoStanje extends JPanel {
 	}
 	
 	private void create() {
-		setSize(300,300);
+		setSize(300,200);
 		temp = new Temperatura("Temperatura");
 		pritisak = new JCheckBox("Visok pritisak");
 		oporavak = new JCheckBox("Oporavlja se od operacije");
 		panel = new JPanel();
+		panel.setLayout(new GridLayout(3, 1));
 		panel.add(temp);
 		panel.add(pritisak);
 		panel.add(oporavak);

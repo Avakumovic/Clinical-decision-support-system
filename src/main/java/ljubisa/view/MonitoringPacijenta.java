@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.poi.util.SystemOutLogger;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 
@@ -141,7 +142,8 @@ public class MonitoringPacijenta extends JDialog {
 	public MonitoringPacijenta(Frame frame, Pacijent pac, boolean mod, KieSession ksession) {
 		super(frame, "Monitoring", mod);
 		pacijent = pac;
-		ksession = session;
+		session = ksession;
+		System.out.println(pacijent+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		create();
 	}
 	
@@ -174,7 +176,7 @@ public class MonitoringPacijenta extends JDialog {
 		uvecajKiseonik.setEnabled(false);
 		umanjiKiseonik.setEnabled(false);
 		
-		start = new JButton();
+		start = new JButton("Start");
 		start.addActionListener(new ActionListener() {
 			
 			@Override
@@ -186,7 +188,7 @@ public class MonitoringPacijenta extends JDialog {
 				usporiOtkucajeSrca.setEnabled(true);
 				uvecajKiseonik.setEnabled(true);
 				umanjiKiseonik.setEnabled(true);
-				
+				System.out.println(pacijent+"xccccccccccccccccccccccccccccccccccc");
 				session.insert(pacijent);
 				session.insert(ispis);
 				
