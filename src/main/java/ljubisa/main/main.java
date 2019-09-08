@@ -207,24 +207,24 @@ public class main {
 		kie2.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
 		kie2.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 		
-		KieSession kSessionProveraAlergije = container.newKieSession("ksession-ProveriAlergije");
-		kSessionProveraAlergije.setGlobal(sviLekovi.getSviLekovi().get(0).getNazivLeka(), sviLekovi.getSviLekovi().get(0));
-		kSessionProveraAlergije.setGlobal(sviLekovi.getSviLekovi().get(1).getNazivLeka(), sviLekovi.getSviLekovi().get(1));
-		kSessionProveraAlergije.setGlobal(sviLekovi.getSviLekovi().get(2).getNazivLeka(), sviLekovi.getSviLekovi().get(2));
+		KieSession kSessionAlergicnost = container.newKieSession("ksession-ProveriAlergije");
+		kSessionAlergicnost.setGlobal(sviLekovi.getSviLekovi().get(0).getNazivLeka(), sviLekovi.getSviLekovi().get(0));
+		kSessionAlergicnost.setGlobal(sviLekovi.getSviLekovi().get(1).getNazivLeka(), sviLekovi.getSviLekovi().get(1));
+		kSessionAlergicnost.setGlobal(sviLekovi.getSviLekovi().get(2).getNazivLeka(), sviLekovi.getSviLekovi().get(2));
 		
 		KieSession ksessionMonitoringPacijenta = container.newKieSession("cepConfigKsessionRealtimeClock");
 		
-		KieSession ksQuerry = container.newKieSession("ksession-Querry");
-		ksQuerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
-		ksQuerry.setGlobal("prehlada", prehlada);
-		ksQuerry.setGlobal("groznica", groznica);
-		ksQuerry.setGlobal("upalaKrajnika", upalaKrajnika);
-		ksQuerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+		KieSession qQuerryy = container.newKieSession("ksession-Querry");
+		qQuerryy.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
+		qQuerryy.setGlobal("prehlada", prehlada);
+		qQuerryy.setGlobal("groznica", groznica);
+		qQuerryy.setGlobal("upalaKrajnika", upalaKrajnika);
+		qQuerryy.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
 
-		ksQuerry.setGlobal("dijabetes", dijabetes);
-		ksQuerry.setGlobal("hipertenzija", hipertenzija);
-		ksQuerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
-		ksQuerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+		qQuerryy.setGlobal("dijabetes", dijabetes);
+		qQuerryy.setGlobal("hipertenzija", hipertenzija);
+		qQuerryy.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+		qQuerryy.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 		
 		KieSession kSessionIzvestaji = container.newKieSession("ksession-rulesIzveshtaji");
 
@@ -322,9 +322,9 @@ public class main {
 							nazivIzabranihLekovaSet.add(dod.getPrepisivanjeTerapijePanel().getListaSimptoma().selectedList.getModel().getElementAt(i).toString());
 						}
 						dod.getAlergijaNaLek().setText("");
-						kSessionProveraAlergije.insert(pac);
+						kSessionAlergicnost.insert(pac);
 					
-						kSessionProveraAlergije.insert(dod.getAlergijaNaLek());
+						kSessionAlergicnost.insert(dod.getAlergijaNaLek());
 						
 						ArrayList<Lek> prepisaniLekoviArr = new ArrayList<>();
 						HashSet<String> prepisaniLekoviStr = new HashSet<>();
@@ -344,11 +344,11 @@ public class main {
 						
 						if(!prepisaniLekoviArr.isEmpty()) {
 							for(Lek l : prepisaniLekoviArr) {
-								kSessionProveraAlergije.insert(l);
+								kSessionAlergicnost.insert(l);
 							}
 						}
 						Alergicnost jeAlergican = new Alergicnost(false);
-						kSessionProveraAlergije.insert(jeAlergican);
+						kSessionAlergicnost.insert(jeAlergican);
 					
 						HashSet<String> sastojciIzabranihLekova = new HashSet<>();
 						if(!prepisaniLekoviArr.isEmpty()) {
@@ -360,11 +360,11 @@ public class main {
 						}						
 						
 
-						kSessionProveraAlergije.insert(sastojciIzabranihLekova);
+						kSessionAlergicnost.insert(sastojciIzabranihLekova);
 						
 						
-						kSessionProveraAlergije.getAgenda().getAgendaGroup("proveriAlergije").setFocus();
-						kSessionProveraAlergije.fireAllRules();
+						kSessionAlergicnost.getAgenda().getAgendaGroup("proveriAlergije").setFocus();
+						kSessionAlergicnost.fireAllRules();
 						dod.getPrepisiTerapiju().setEnabled(!jeAlergican.isJeAlergican());
 					
 					}
@@ -422,10 +422,7 @@ public class main {
 				
 			}
 		});;
-		
-		
 
-		
 		dod.getMonitoring().addActionListener(new ActionListener() {
 			
 			@Override
@@ -443,11 +440,7 @@ public class main {
 							e1.printStackTrace();
 						}
 						monitor.deleteAll();
-					}
-
-
-					
-					
+					}					
 				});
 			}
 		});
@@ -458,15 +451,15 @@ public class main {
 				
 				Bolest selektovana = (Bolest) dod.getPrepisivanjeTerapijePanel().getBolestiComboBox().getSelectedItem();
 				
-				ksQuerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
-				ksQuerry.insert(selektovana);
+				qQuerryy.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
+				qQuerryy.insert(selektovana);
 				
 				JTextArea taSimpomiZaOvuBolest = new JTextArea();
 				
 				taSimpomiZaOvuBolest.setEditable(false);
-				ksQuerry.insert(taSimpomiZaOvuBolest);
+				qQuerryy.insert(taSimpomiZaOvuBolest);
 				
-				ksQuerry.fireAllRules();
+				qQuerryy.fireAllRules();
 				JOptionPane thepane = new JOptionPane();
 				thepane.setSize(500, 500);
 				JOptionPane.showMessageDialog(dod, taSimpomiZaOvuBolest, "Simptomi bolesti: "+ selektovana.getNaziv(), JOptionPane.YES_OPTION );
@@ -489,15 +482,15 @@ public class main {
 						izabrani.add(s);
 					}
 				}
-				ksQuerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+				qQuerryy.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 				
 				for(SviSimptomi sTempIzabrani : izabrani) {
-					ksQuerry.insert(sTempIzabrani);
+					qQuerryy.insert(sTempIzabrani);
 				}
 				JTextArea taIspis = new JTextArea(); 
 				taIspis.setEditable(false);
-				ksQuerry.insert(taIspis);
-				ksQuerry.getAgenda().getAgendaGroup("SimpUBolestima").setFocus();
+				qQuerryy.insert(taIspis);
+				qQuerryy.getAgenda().getAgendaGroup("SimpUBolestima").setFocus();
 				
 				
 				
@@ -510,13 +503,13 @@ public class main {
 
 				}
 				Pregled p = new Pregled(null, null, null, ddd, true, null);
-				ksQuerry.insert(p);
+				qQuerryy.insert(p);
 				
 				if (dod.getTrenutnoStanje().getOporavak().isSelected()) {
-					ksQuerry.insert(SpecificniSimptomi.OPORAVLJA_SE_OD_OPERACIJE);
+					qQuerryy.insert(SpecificniSimptomi.OPORAVLJA_SE_OD_OPERACIJE);
 				}
 				
-				ksQuerry.fireAllRules();
+				qQuerryy.fireAllRules();
 				
 		
 				JOptionPane.showMessageDialog(dod, taIspis, "Bolesti: ", JOptionPane.YES_OPTION );
@@ -609,16 +602,9 @@ public class main {
 
 			}
 		});
-		
-		
-		
+	
 		
 	}
-	
-	
-	
+
 }
-
-
-
 
